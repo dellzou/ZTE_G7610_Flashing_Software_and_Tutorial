@@ -1,0 +1,11 @@
+改地区：
+设置国家地区代码：   upgradetest sdefconf [序号]
+查询国家地区代码：   upgradetest gdefconf
+如果upgradetest命令不成功，请修改为siupgrade#
+
+修改SN: setmac 1 512 xxxxxxxx [SN为8字符]
+查询当前sn
+
+
+重庆：206
+344338353035343834443314636313338

@@ -1,0 +1,149 @@
+/*ONU一键信息收集脚本*/
+/*如果是连接以前的设备，请删除“>”后面面的内容*/
+<WebUser>CMCCAdmin
+<WebPass>aDm8H%MdA
+
+//VoIP+MirrorCPU
+<Mirror-CPU>
+sendcmd 1 DB p VOIPExt | grep ProtocolSet
+sendcmd 1 DB p WANC | egrep "Row|IPAddr|VLANID|WorkIFMac|StrServList"
+sendcmd 1 DB p WANCIP | egrep "Row|ViewName|IPAddress|GateWay|ConnStatus"
+sendcmd 1 DB p VoIPBearInfo
+[SIP]sendcmd 1 DB p VoIPSIP | egrep "Port|Interval|Regist|Link|Expires|LineDown"
+[SIP]sendcmd 1 DB p VoIPSIPServer
+[SIP]sendcmd 1 DB p VoIPSIPLine
+[SIP]sendcmd 1 DB p VoIPVoiceProfile
+[H248]sendcmd 1 DB p VoIPH248MainCfg | egrep "MG[MC]|Port|HeartBeat|TermID|TID"
+[H248]sendcmd 1 DB p VoIPH248SubCfg | egrep "Timer|RtpPro|Match|Ctrl|MGC"
+[H248]sendcmd 1 DB p VoIPH248LineCfg
+[F420V2.0.0,F411V2.0.0,F620V2.0.0]sendcmd 1 DB set VOIPExt 0 TraceFlag 1
+[F420V2.0.0,F411V2.0.0,F620V2.0.0]sendcmd 1 DB save
+[V5.,Default]sendcmd log klogudpwatch ip <OnuNet>100
+[V5.,Default]sendcmd log klogudpwatch enable 1
+[V5.,Default]sendcmd 2 BoardControl set 34001 0 1
+[F420V2.0.0,F411V2.0.0,F620V2.0.0,.30.,V5.]sendcmd 2 BoardControl set 34000 0 <OnuNet>100
+[SIP]sendcmd 2 BoardControl set 34004 0 7
+[H248]sendcmd 2 BoardControl set 34002 0 3
+sendcmd 2 BoardControl set 34001 0 1
+sendcmd 2 BoardControl set 34012 0 1
+[V5.,Default]sendcmd 2 BoardControl set 34006 0 4
+[F420V2.0.0,F411V2.0.0,F620V2.0.0]sendcmd 2 BoardControl set 34006 0 8
+[.30.]sendcmd 2 BoardControl set 34006 0 15
+sendcmd 2 BoardControl set 34007 0 2
+sendcmd 2 BoardControl set 34008 0 7
+sendcmd 2 BoardControl set 34017 0 3
+sendcmd 2 BoardControl set 34016 0 7
+[V5.]dsptool halcapstop 0
+[V5.]dsptool halcapstop 1
+[V5.]dsptool halcapdeinit
+[V5.]dsptool halcapsetup <OnuNet>100
+[V5.]dsptool halcapstart 0
+[V5.]dsptool halcapstart 1
+[Default]insmod /kmodule/ko_debug.ko cmd=trace mode=15
+[Default]insmod /kmodule/ko_debug.ko cmd=cmdtrace printip=<OnuNet>100
+[F411V2.0.0]insmod /kmodule/ko_debug.ko cmd=iptrace traceip=<OnuNet>100
+redir a
+redir p
+
+//MirrorCPU
+[.30.]ethdriver_test -setmiror 2 <DestPort> 0
+[.30.]ethdriver_test -setmiror 2 <DestPort> 1
+[F420V2.0.0,F620V2.0.0]switchtst -spmirr 0 8 <DestPort> 3
+[F420V2.0.0,F620V2.0.0]switchtst -spmirr 1 8 <DestPort> 3
+[.22.2]switchtst -spmirr wan 0 2 eth<DestPort>
+[.22.2]switchtst -spmirr wan 1 2 eth<DestPort>
+[.20.2,.21.2]switchtst -spmirr 0 wan eth<DestPort> 3
+[.20.2,.21.2]switchtst -spmirr 1 wan eth<DestPort> 3
+[V5.,Default]ifconfig mirror del pon0 eth<DestPort>
+[V5.,Default]ifconfig mirror add pon0 eth<DestPort>
+
+//MirrorSwitch
+[.30.]switchtst -spmirr 0 4 <DestPort> 3
+[.30.]switchtst -spmirr 1 4 <DestPort> 3
+[F420V2.0.0,F620V2.0.0]switchtst -spmirr 0 8 <DestPort> 3
+[F420V2.0.0,F620V2.0.0]switchtst -spmirr 1 8 <DestPort> 3
+[.22.2]switchtst -spmirr wan 0 2 eth<DestPort>
+[.22.2]switchtst -spmirr wan 1 2 eth<DestPort>
+[.20.2,.21.2]switchtst -spmirr 0 wan eth<DestPort> 3
+[.20.2,.21.2]switchtst -spmirr 1 wan eth<DestPort> 3
+[V5.,Default]switchtst -spmirr wan 0 2 eth<DestPort>
+[V5.,Default]switchtst -spmirr wan 1 2 eth<DestPort>
+
+//Tr069+MirrorCPU
+[.30.]ethdriver_test -setmiror 2 <DestPort> 0
+[.30.]ethdriver_test -setmiror 2 <DestPort> 1
+[F420V2.0.0,F620V2.0.0]switchtst -spmirr 0 8 <DestPort> 3
+[F420V2.0.0,F620V2.0.0]switchtst -spmirr 1 8 <DestPort> 3
+[.22.2]switchtst -spmirr wan 0 2 eth<DestPort>
+[.22.2]switchtst -spmirr wan 1 2 eth<DestPort>
+[.20.2,.21.2]switchtst -spmirr 0 wan eth<DestPort> 3
+[.20.2,.21.2]switchtst -spmirr 1 wan eth<DestPort> 3
+[V5.,Default]ifconfig mirror del pon0 eth<DestPort>
+[V5.,Default]ifconfig mirror add pon0 eth<DestPort>
+
+//OAM
+[V5.]eponctl debug 1 2 1
+[.30.]epondbg -shstdbg 1
+sendcmd 129 eponoam log MsgDebug 1
+[V5.]sendcmd 133 eponoam log MsgDebug 1
+sendcmd 129 eponoam msgdbg 1
+sendcmd 129 eponoam log all 1
+[V5.]sendcmd 133 eponoam log all 1
+redir a
+redir p
+[Delay]redir delete
+[Delay][V5.]eponctl debug 1 2 0
+[Delay][.30.]epondbg -shstdbg 0
+[Delay]sendcmd 129 eponoam log MsgDebug 0
+[Delay][V5.]sendcmd 133 eponoam log MsgDebug 0
+[Delay]sendcmd 129 eponoam msgdbg 0
+[Delay]sendcmd 129 eponoam log all 0
+[Delay][V5.]sendcmd 133 eponoam log all 0
+
+//OMCI
+[.22.2]gpontest -dbg 6
+[.22.2]pontst -sploamdbg 1
+gpontest -sdbg 1 2
+gpontest -sploamdbg 1
+[Default]pontst -sploamdbg 2
+[Default]gponsdk_test -s_print_dbg 1
+sendcmd 132 omcidebug setprintlevel 5 0 0
+[Default]sendcmd 132 omcidebug setprintlevel 5 0 0
+redir a
+redir p
+[Delay]redir delete
+[Delay][.22.2]gpontest -dbg 0
+[Delay][.22.2]pontst -sploamdbg 0
+[Delay]gpontest -sdbg 0 0
+[Delay][V5.,Default]gpontest -sploamdbg 0
+[Delay][Default]gponsdk_test -s_print_dbg 0
+[Delay][Default]gponsdk_test -s_print_dbg 0
+[Delay]cat /proc/net/xpon/entry
+[Delay]sendcmd 132 omcidebug showmedada 0
+[Delay]sendcmd 132 omcidebug setprintlevel 0 0 0
+
+//Return2Factory
+rm -rf /userconfig/slog/*
+gdbus call --system -d com.ctc.saf1 -o /com/ctc/saf1 -m com.ctc.saf1.framework.Restore
+rm -fr /usr/plugin/*
+rm -fr /usr/data/o_ins/*
+rm -rf /userconfig/highlow_cfg
+rm -rf /userconfig/cfg/*
+rm -rf /userconfig/env_param
+sync
+reboot
+
+//DisablePushWeb
+sendcmd 1 DB p PDTCTUSERINFO
+sendcmd 1 DB set PDTCTUSERINFO 0 Status 0
+sendcmd 1 DB set PDTCTUSERINFO 0 Result 1
+sendcmd 1 DB set PDTCTUSERINFO 0 tForcePushFlg 0
+sendcmd 1 DB save
+reboot
+
+//Custom
+ps
+
+//Manual
+
+<Delay:5>Default is 5 minuts.
