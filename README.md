@@ -4,7 +4,7 @@
 
 仓库里只放**工具**。53 MB 的整包固件放在 Releases 里，不在仓库正文：
 
-- Release 页面：见本仓库右侧 Releases
+- Release 页面：https://github.com/dellzou/ZTE_G7610_Flashing_Software_and_Tutorial/releases/tag/v3.0.5p1n27
 - 文件名：`G7610V2_V3.0.5P1N27_FULL.bin`
 
 ## 文件清单
