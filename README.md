@@ -59,6 +59,15 @@ certutil -hashfile ZTelnet_v1.0.5.exe SHA256
 - 部分中兴通用命令文档里，改 MAC 那段把 256 写成了 17 位地址，262/263 顺序也乱。照抄会写入非法地址，请按 00–07 递增自行排列。
 - 工厂模式返回的 `FactoryModeAuth.gch?user=...&pass=...` 是**当次会话**的临时凭据，不是固定账号，不要当通用密码用。
 
+## 相关仓库
+
+同品牌其它机型，命令体系相近，排障时可以互相参照；每个仓库开头都对应一篇文章：
+
+- [中兴 F650 / F1855V2 工具包](https://github.com/dellzou/ZTE_F650_F1855V2_Flashing_Software_and_Tutorial)：中兴 F650 / F1855V2，天翼网关 4.0 开 Telnet
+- [中兴 F673AV9 / F7015TV3 / F7610M 工具包](https://github.com/dellzou/ZTE_F673AV9_F7015TV3_F7610M_Flashing_Software_and_Tutorial)：中兴 F673AV9 / F7015TV3 / F7610M，一套命令通吃
+- [中兴 F7607P 工具包](https://github.com/dellzou/ZTE_F7607P_Flashing_Software_and_Tutorial)：中兴 F7607P，改地区与电信版固件
+- [中兴 G7615 / G7611 工具包](https://github.com/dellzou/ZTE_G7615_G7611_Flashing_Software_and_Tutorial)：中兴 G7615 / G7611，改地区与分区刷写
+
 ## 免责声明
 
 本仓库中的工具与固件均来自厂商维修渠道与公开流传的维修资料，仅供**自有设备**的维修、恢复与学习使用。刷机有变砖风险，带 BOOTLDR 的整包固件写坏引导后通常只能上串口。请勿用于他人线路或未授权的设备，因使用造成的任何损失由使用者自行承担。
